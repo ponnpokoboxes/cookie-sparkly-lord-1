@@ -1,5 +1,6 @@
 const http = require("http");
-const querystring = require("querystring");
+/*const queryString = require("query-string");*/
+const qs = require("qs");
 const fs = require("node:fs");
 const path = require("node:path");
 const fetch = require("node-fetch");
@@ -38,7 +39,7 @@ const {
   demuxProbe,
   getVoiceConnection,
 } = require("@discordjs/voice");
-const { OpusEncoder } = require("@discordjs/opus");
+const { OpusEncoder } = require("opusscript");
 const { PassThrough } = require("stream");
 const { createReadStream } = require("node:fs");
 const { Buffer } = require("node:buffer");
@@ -58,7 +59,7 @@ http
           res.end();
           return;
         }
-        var dataObject = querystring.parse(data);
+        var dataObject = qs.parse(data);
         console.log("post:" + dataObject.type);
         if (dataObject.type == "wake") {
           console.log("Woke up in post");
@@ -83,7 +84,7 @@ http
             roleId2,
             enterStamp,
             exitStamp,
-            recChId
+            recChId,
           );
           res.end();
           return;
@@ -97,7 +98,7 @@ http
           var response = sinngiSt(agdURL, agdTXT, agdCGL, agdNUM).then(
             (response) => {
               console.log(response);
-            }
+            },
           );
           res.end();
           return;
@@ -194,7 +195,7 @@ http
           console.log("ponnpoko:" + dataObject.type);
           var whoIsHere = peopleInTheGuild(
             dataObject.guildID,
-            dataObject.userID
+            dataObject.userID,
           );
           var words = whoIsHere;
           res.end("うにょん" + words);
@@ -204,7 +205,7 @@ http
           console.log("ponnpoko:" + dataObject.type);
           var whoIsHere = peopleInTheGuild2(
             dataObject.guildID,
-            dataObject.userID
+            dataObject.userID,
           );
           var words = whoIsHere;
           res.end("うにょん" + words);
@@ -242,7 +243,7 @@ async function count(
   roleId2,
   enterStamp,
   exitStamp,
-  recChId
+  recChId,
 ) {
   const enterStampS = String(enterStamp).replace(/<:/, "").replace(/:.*/, ""),
     exitStampS = String(exitStamp).replace(/<:/, "").replace(/:.*/, "");
@@ -292,7 +293,7 @@ async function count(
               messageReacted,
               reactionUsers[cV][0],
               String(exitStampS),
-              "0"
+              "0",
             ); //以前のリアクションは解除。message, userId, emojiId
             await member.roles.add(roleT);
             if (roleId2 != "") {
@@ -302,7 +303,7 @@ async function count(
           } //試験用：1175113333851050014　実用：1071290225499840512
           sendMsg(
             String(recChId),
-            String(enterStamp) + ": " + String(reactionUsers[cV][0]) + cnew
+            String(enterStamp) + ": " + String(reactionUsers[cV][0]) + cnew,
           ); //試験用：1175452034338660503　実用：1177070862428549132
           await sleep(0.1 * 1000);
         } else if (
@@ -328,7 +329,7 @@ async function count(
                   messageReacted,
                   reactionUsers[cV][0],
                   String(enterStampS),
-                  "1"
+                  "1",
                 ); //以前のリアクションは解除。message, userId, emojiId
                 await member.roles.remove(roleT);
                 if (roleId2 != "") {
@@ -342,7 +343,7 @@ async function count(
                 messageReacted,
                 reactionUsers[cV][0],
                 String(enterStampS),
-                "2"
+                "2",
               ); //以前のリアクションは解除。message, userId, emojiId
               await member.roles.remove(roleT);
               if (roleId2 != "") {
@@ -354,7 +355,7 @@ async function count(
           } //試験用：1175113333851050014　実用：1071290225499840512
           sendMsg(
             String(recChId),
-            String(exitStamp) + ": " + String(reactionUsers[cV][0]) + cnew
+            String(exitStamp) + ": " + String(reactionUsers[cV][0]) + cnew,
           ); //試験用：1175452034338660503　実用：1177070862428549132
           await sleep(0.1 * 1000);
         }
@@ -397,7 +398,7 @@ async function count(
 
 async function reactRemove(messageReacted, userId, emojiName, type) {
   const userReactions = messageReacted.reactions.cache.filter((reaction) =>
-    reaction.users.cache.has(userId)
+    reaction.users.cache.has(userId),
   );
 
   try {
@@ -411,7 +412,7 @@ async function reactRemove(messageReacted, userId, emojiName, type) {
         "",
         String(userId),
         "のリアクションを削除しました",
-        String(type)
+        String(type),
       );
     }
   } catch (error) {
@@ -422,7 +423,7 @@ async function reactRemove(messageReacted, userId, emojiName, type) {
       "",
       String(userId),
       "のリアクション削除に失敗しました",
-      String(type)
+      String(type),
     );
   }
 }
@@ -433,7 +434,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
     agdURL.toString(),
     agdTXT.toString(),
     agdCGL.toString(),
-    Number(agdNUM)
+    Number(agdNUM),
   );
   var sinngiIs = "",
     gityouTo = "1177070862428549132"; //議長向け通知の宛先。練習用: 1175452034338660503 実用: 1177070862428549132
@@ -503,7 +504,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             "チャンネル: ",
             chan,
             "最新の投稿: ",
-            lastMessage.content
+            lastMessage.content,
           );
           var motAfIs = await pastMessageIs(
             guild,
@@ -511,7 +512,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             lastMessage,
             nowMinus2h,
             chan,
-            gityouTo
+            gityouTo,
           ).then(async function (motAfIs) {
             console.log("motAfIs[0]: ", motAfIs[0]);
 
@@ -540,12 +541,12 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             ) {
               await sendMsg(
                 gityouTo,
-                "▼---<#" + channelIDs[j].toString() + ">---"
+                "▼---<#" + channelIDs[j].toString() + ">---",
               );
 
               if (
                 lastMessage.content.match(
-                  /^@各位\nご意見・ご質問などありましたら、引き続きぜひ述べてください。$/
+                  /^@各位\nご意見・ご質問などありましたら、引き続きぜひ述べてください。$/,
                 ) &&
                 (lastMesRole == "1089034307500249179" ||
                   lastMesRole == "1100657196783632447" ||
@@ -556,7 +557,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
                     "-----\nこちらの議題は、そろそろまとめに入りたいと思います。引き続き、意見などはぜひ述べてください。");
               } else if (
                 lastMessage.content.match(
-                  /^-----\nこちらの議題は、そろそろまとめに入りたいと思います。引き続き、意見などはぜひ述べてください。$/
+                  /^-----\nこちらの議題は、そろそろまとめに入りたいと思います。引き続き、意見などはぜひ述べてください。$/,
                 ) &&
                 (lastMesRole == "1089034307500249179" ||
                   lastMesRole == "1100657196783632447" ||
@@ -566,7 +567,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
                   (mesIs = "<@&1089034307500249179> まとめをお願いします。"); //通報チャンネル→試験用：1175452034338660503　実用：--
               } else if (
                 lastMessage.content.match(
-                  /（まとめは、先日載せたものを更新してこれに充てます。）/
+                  /（まとめは、先日載せたものを更新してこれに充てます。）/,
                 ) &&
                 (lastMesRole == "1089034307500249179" ||
                   lastMesRole == "1100657196783632447" ||
@@ -587,7 +588,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
                   matoAfD2,
                   matoAfE,
                   befT,
-                  winding
+                  winding,
                 ).then(async function (motAfIs) {
                   //採決セット発行（改定後採決）
                   await matome(motAfIs[1]);
@@ -599,7 +600,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
               } //
               else if (
                 lastMessage.content.match(
-                  /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/
+                  /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/,
                 ) &&
                 (lastMesRole == "1089034307500249179" ||
                   lastMesRole == "1100657196783632447" ||
@@ -659,7 +660,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
                   beforeURL = beforeMessage.url;
                 var mesPollAgdP = beforeCont.substring(
                   beforeCont.indexOf("議題「") + 3,
-                  beforeCont.indexOf("」については")
+                  beforeCont.indexOf("」については"),
                 );
                 var mesPollAgd =
                   "<#" +
@@ -691,7 +692,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             var kennsuuT = lastMessage.content.toString();
             var numT = kennsuuT.substring(
               kennsuuT.indexOf("件") - 1,
-              kennsuuT.indexOf("件")
+              kennsuuT.indexOf("件"),
             );
             var befT = lastMessage.id; //初期値
             for (var k = 0; k < Number(numT); k++) {
@@ -707,44 +708,44 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
                     beforeCont = beforeMessage.content.toString(),
                     beforeURL = beforeMessage.url;
                   console.log("beforeCont", beforeCont);
-                  var circleT = myPromise2(beforeMessage).then(async function (
-                    emojiIs
-                  ) {
-                    console.log(
-                      "emojiIs: ",
-                      emojiIs,
-                      "next befT is: ",
-                      beforeMessage.id
-                    );
-                    var oneT = emojiIs[0] - 1,
-                      twoT = emojiIs[1] - 1,
-                      threeT = emojiIs[2] - 1;
-                    {
-                      if (oneT > twoT) {
-                        var kekkaT = "可決";
-                      } else {
-                        var kekkaT = "否決";
+                  var circleT = myPromise2(beforeMessage).then(
+                    async function (emojiIs) {
+                      console.log(
+                        "emojiIs: ",
+                        emojiIs,
+                        "next befT is: ",
+                        beforeMessage.id,
+                      );
+                      var oneT = emojiIs[0] - 1,
+                        twoT = emojiIs[1] - 1,
+                        threeT = emojiIs[2] - 1;
+                      {
+                        if (oneT > twoT) {
+                          var kekkaT = "可決";
+                        } else {
+                          var kekkaT = "否決";
+                        }
                       }
-                    }
-                    await sendMsg(gityouTo, beforeURL);
-                    var mesT =
-                      "〆\n賛成" +
-                      oneT +
-                      "、反対" +
-                      twoT +
-                      "、棄権" +
-                      threeT +
-                      "との結果を得ました。よって本案は" +
-                      kekkaT +
-                      "されたものと認めます。";
-                    await sendMsg(gityouTo, mesT);
-                    console.log(
-                      "Number(numT): ",
-                      Number(numT),
-                      "beforeURL: ",
-                      beforeURL
-                    );
-                  });
+                      await sendMsg(gityouTo, beforeURL);
+                      var mesT =
+                        "〆\n賛成" +
+                        oneT +
+                        "、反対" +
+                        twoT +
+                        "、棄権" +
+                        threeT +
+                        "との結果を得ました。よって本案は" +
+                        kekkaT +
+                        "されたものと認めます。";
+                      await sendMsg(gityouTo, mesT);
+                      console.log(
+                        "Number(numT): ",
+                        Number(numT),
+                        "beforeURL: ",
+                        beforeURL,
+                      );
+                    },
+                  );
                   return beforeMessage.id;
                 });
             }
@@ -768,7 +769,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             (agdCGL.toString() == "A" || agdCGL.toString() == "B") &&
             (lastMessage.content.match(/^〆$/) ||
               lastMessage.content.match(
-                /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/
+                /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/,
               ) ||
               lastMessage.content.match(/^▼処理中。本投稿消滅まで発言不可▼$/))
           ) {
@@ -777,13 +778,13 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
               agdTXT,
               kaishiNum,
               Number(agdNUM),
-              lastMessage.content.match(/^▼処理中。本投稿消滅まで発言不可▼$/)
+              lastMessage.content.match(/^▼処理中。本投稿消滅まで発言不可▼$/),
             );
             //通報チャンネル→試験用：1175452034338660503　実用：chan
             if (kaishiNum == Number(agdNUM)) {
               await sendMsg(
                 gityouTo,
-                "▼▼--<#" + channelIDs[j].toString() + ">---"
+                "▼▼--<#" + channelIDs[j].toString() + ">---",
               );
               await sendMsg(gityouTo, agdURL); //提出されたメッセージへのリンク（URL）を送る
               await sendMsg(gityouTo, agdTXT); //議題テクストを送る
@@ -806,7 +807,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
                 });*/
               await sendMsg(
                 gityouTo,
-                "<@&1071290225499840512> ご審議願います。"
+                "<@&1071290225499840512> ご審議願います。",
               ); //ロール→試験用：1175113333851050014　実用：1071290225499840512
               console.log(channelIDs[j], "で", agdTXT, "の審議開始");
               await callApi(agdURL, "予約の取り消し");
@@ -819,20 +820,20 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             (agdCGL.toString() == "A" || agdCGL.toString() == "B") &&
             (lastMessage.content.match(/^〆$/) ||
               lastMessage.content.match(
-                /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/
+                /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/,
               ) ||
               lastMessage.content.match(
-                /^▼処理中。本投稿消滅まで発言不可▼$/
+                /^▼処理中。本投稿消滅まで発言不可▼$/,
               )) &&
             kaishiNum - 1 == Number(agdNUM) //kaishiNumは上で1足されているので、その分1引いて値を整えている。
           ) {
             var mesChk = Number(agdNUM) + 1;
             console.log(
-              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk
+              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk,
             );
             await sendMsg(
               gityouTo,
-              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk
+              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk,
             );
             return "審議開始";
           }
@@ -850,7 +851,7 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
             console.log(agdTXT, "審議室空きなし");
             await sendMsg(
               gityouTo,
-              "- " + agdURL + " " + agdTXT + " 審議室空きなし"
+              "- " + agdURL + " " + agdTXT + " 審議室空きなし",
             );
           }
           if (
@@ -859,11 +860,11 @@ async function sinngiSt(agdURL, agdTXT, agdCGL, agdNUM) {
           ) {
             var mesChk = Number(agdNUM) + 1;
             console.log(
-              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk
+              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk,
             );
             await sendMsg(
               gityouTo,
-              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk
+              "審議待ち検索 稼働済み その" + agdCGL.toString() + mesChk,
             );
           }
         })
@@ -883,7 +884,7 @@ async function pastMessageIs(
   lastMessage,
   nowMinus2h,
   chan,
-  gityouTo
+  gityouTo,
 ) {
   var matoAfC = 0, //まとめる場合は1になる
     matoAfD = 0, //発言を挟んで採決セットを発行する場合は8か9になる
@@ -900,7 +901,7 @@ async function pastMessageIs(
     matoAfD2,
     matoAfE,
     befT,
-    winding
+    winding,
   );
   /*if (Number(ret[0]) == 7) {
     (winding = 50), (befT = [String(ret[1]), 1]);
@@ -929,7 +930,7 @@ async function tuduki(
   matoAfD2,
   matoAfE,
   befT,
-  winding
+  winding,
 ) {
   for (var matoAf = 0; matoAf < Number(winding); matoAf++) {
     console.log("befT[0]", befT[0], "befT[1]", befT[1], "matoAfE", matoAfE);
@@ -1005,7 +1006,7 @@ async function tuduki(
             befMesRole == "1100657196783632447" ||
             befMesRole == "1175447455433764966") &&
           beforeCont.match(
-            /@各位\nご意見・ご質問などありましたら、引き続きぜひ述べてください。/
+            /@各位\nご意見・ご質問などありましたら、引き続きぜひ述べてください。/,
           )
         ) {
           matoAfE == 3;
@@ -1018,7 +1019,7 @@ async function tuduki(
             befMesRole == "1100657196783632447" ||
             befMesRole == "1175447455433764966") &&
           beforeCont.match(
-            /（まとめは、先日載せたものを更新してこれに充てます。）/
+            /（まとめは、先日載せたものを更新してこれに充てます。）/,
           )
         ) {
           (matoAfD = 7), (winding = 50), (matoAfD2 = 1);
@@ -1033,7 +1034,7 @@ async function tuduki(
             befMesRole == "1100657196783632447" ||
             befMesRole == "1175447455433764966") &&
           beforeCont.match(
-            /^-----\nこちらの議題は、そろそろまとめに入りたいと思います。引き続き、意見などはぜひ述べてください。$/
+            /^-----\nこちらの議題は、そろそろまとめに入りたいと思います。引き続き、意見などはぜひ述べてください。$/,
           )
         ) {
           matoAfC == 1;
@@ -1046,7 +1047,7 @@ async function tuduki(
             befMesRole == "1100657196783632447" ||
             befMesRole == "1175447455433764966") &&
           beforeCont.match(
-            /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/
+            /今回の議論をまとめてみたのですが、これにて一旦審議終結としても異議はありませんでしょうか？/,
           )
         ) {
           if (matoAfD2 == 1) {
@@ -1074,7 +1075,7 @@ function myPromise2(beforeMessage) {
         const reactionUsers = Array.from(await reaction.users.fetch());
         console.log(emojiName, emojiCount);
         return emojiCount;
-      })
+      }),
     );
     resolve(emojiCs);
   });
@@ -1131,7 +1132,7 @@ function myPromise2q(beforeMessage) {
         const reactionUsers = Array.from(await reaction.users.fetch());
         console.log(emojiName, emojiCount);
         return [emojiName, reactionUsers];
-      })
+      }),
     );
     resolve(emojiCs);
   });
@@ -1181,7 +1182,7 @@ async function darumaCounter(channelID, comment) {
         "チャンネル: ",
         channelID,
         "最新の投稿: ",
-        lastMessage.content
+        lastMessage.content,
       );
       if (comment == "START") {
         await lastMessage.react("🏁");
@@ -1194,7 +1195,7 @@ async function darumaCounter(channelID, comment) {
       (lMesId = lastMessage.id), (lMesCont = Number(lastMessage.content));
       console.log(
         "act2",
-        String(act2[0][0]) == "OK" && String(act2[0][2]) != "滞留はありません"
+        String(act2[0][0]) == "OK" && String(act2[0][2]) != "滞留はありません",
       );
       if (
         String(act2[0][0]) == "OK" &&
@@ -1261,7 +1262,7 @@ async function darumaCounter(channelID, comment) {
                     beforeAuthor,
                     "に対し",
                     befIDarr[bIDar3][3],
-                    "のため⚠️"
+                    "のため⚠️",
                   );
                   await beforeMessage.react("⚠️");
                   return ["ERROR"];
@@ -1274,7 +1275,7 @@ async function darumaCounter(channelID, comment) {
                     beforeCont,
                     "に対し",
                     befIDarr[bIDar2][2],
-                    "のため❌"
+                    "のため❌",
                   );
                   await beforeMessage.react("❌");
                   return ["ERROR"];
@@ -1287,7 +1288,7 @@ async function darumaCounter(channelID, comment) {
                     beforeCont,
                     "に対し",
                     befIDarr[bIDar2][2],
-                    "のため✅"
+                    "のため✅",
                   );
                   await beforeMessage.react("✅");
                   if (eR1 % 100 == 0) {
@@ -1355,56 +1356,56 @@ async function befTAis(channel, channelID, befTA, befIDarr) {
           const messageReacted2 = await client.channels.cache
             .get(channelID.toString()) //試験用：1180401046825209937　実用：1175754185271169044
             .messages.fetch(beforeMessage.id);
-          var circleT = myPromise2q(messageReacted2).then(async function (
-            emojiIs2
-          ) {
-            console.log("emojiIs2", emojiIs2);
-            for (let j = 0; j < emojiIs2.length; j++) {
-              for (let k = 0; k < emojiIs2[j][1].length; k++) {
-                console.log("id", emojiIs2[j][1][k][1].id);
-                if (
-                  (emojiIs2 != "" && emojiIs2[j][1][k][1].id) ==
-                  "1175376490389569586"
-                ) {
-                  console.log("BIGIN");
-                  (check = 1), (emr = j);
-                  break;
-                }
-                if (check == 1) {
-                  break;
+          var circleT = myPromise2q(messageReacted2).then(
+            async function (emojiIs2) {
+              console.log("emojiIs2", emojiIs2);
+              for (let j = 0; j < emojiIs2.length; j++) {
+                for (let k = 0; k < emojiIs2[j][1].length; k++) {
+                  console.log("id", emojiIs2[j][1][k][1].id);
+                  if (
+                    (emojiIs2 != "" && emojiIs2[j][1][k][1].id) ==
+                    "1175376490389569586"
+                  ) {
+                    console.log("BIGIN");
+                    (check = 1), (emr = j);
+                    break;
+                  }
+                  if (check == 1) {
+                    break;
+                  }
                 }
               }
-            }
-            if (emojiIs2 != "" && emojiIs2[emr][0] == "⚠️" && check == 1) {
-              //お手つきなので同じ値から。
-              return [
-                beforeMessage.id,
-                1,
-                Number(beforeCont) - 1,
-                beforeAuthor,
-                "⚠️",
-              ];
-            } else if (
-              emojiIs2 != "" &&
-              (emojiIs2[emr][0] == "❌" || emojiIs2[emr][0] == "🏁") &&
-              check == 1
-            ) {
-              //アウトなので0から。
-              return [beforeMessage.id, 1, 0, "", "❌or🏁"];
-            } else if (
-              emojiIs2 != "" &&
-              emojiIs2[emr][0] == "✅" &&
-              check == 1
-            ) {
-              //問題ないのでその次の値から。
-              return [beforeMessage.id, 1, beforeCont, beforeAuthor, "✅"];
-            } else if (befTAinq > 100) {
-              //ふりだしに戻る。
-              return [beforeMessage.id, 9, 0, ""];
-            } else {
-              return [beforeMessage.id, 0, beforeCont, beforeAuthor, ""];
-            }
-          });
+              if (emojiIs2 != "" && emojiIs2[emr][0] == "⚠️" && check == 1) {
+                //お手つきなので同じ値から。
+                return [
+                  beforeMessage.id,
+                  1,
+                  Number(beforeCont) - 1,
+                  beforeAuthor,
+                  "⚠️",
+                ];
+              } else if (
+                emojiIs2 != "" &&
+                (emojiIs2[emr][0] == "❌" || emojiIs2[emr][0] == "🏁") &&
+                check == 1
+              ) {
+                //アウトなので0から。
+                return [beforeMessage.id, 1, 0, "", "❌or🏁"];
+              } else if (
+                emojiIs2 != "" &&
+                emojiIs2[emr][0] == "✅" &&
+                check == 1
+              ) {
+                //問題ないのでその次の値から。
+                return [beforeMessage.id, 1, beforeCont, beforeAuthor, "✅"];
+              } else if (befTAinq > 100) {
+                //ふりだしに戻る。
+                return [beforeMessage.id, 9, 0, ""];
+              } else {
+                return [beforeMessage.id, 0, beforeCont, beforeAuthor, ""];
+              }
+            },
+          );
         } catch (e) {
           console.log(e);
           return;
@@ -1670,7 +1671,7 @@ async function toBlob(audio) {
   stream.push(null);
   /*const encoder = new OpusEncoder(48000, 2);
   const encoded = encoder.encode(buffer);
-  
+
   /*
 // Encode and decode.
 const encoded = encoder.encode(buffer);*/
@@ -1688,8 +1689,8 @@ function testblob(blob) {
       "file.ogg",
       Buffer.from(
         base64data.replace("data:audio/ogg; codecs=opus;base64,", ""),
-        "base64"
-      )
+        "base64",
+      ),
     );
   };
 }
@@ -1793,98 +1794,98 @@ async function pdfToPngController(channelID) {
           .get(channelID.toString()) //試験用：1180401046825209937　実用：1175754185271169044
           .messages.fetch(befMes[i][0]);
         befMes.push([beforeMessage.id, beforeMessage.content, beforeMessage]);
-        emojiIs = await myPromise2q(messageReacted2).then(async function (
-          emojiIs2
-        ) {
-          console.log("emojiIs2", emojiIs2);
-          if (emojiIs2.length > 0 && emojiIs2[0][0] == "✅") {
-            console.log("emojiIs2[0][0]", emojiIs2[0][0]);
-            i = 10;
-            return i;
-          }
-          console.log("befMes[i][1]", String(befMes[i][1]));
-          str = String(befMes[i][1]);
-          if (str.indexOf("https://") == -1) {
-            console.log("リンクなし");
-            skip++;
-          }
-          //デフォルトはPDF全ページかつフォント優先なし。ただし誤字などは自動補正される。
-          (pgS = "FR"), (pgE = "FR"), (ctC = "FALSE");
-          if (
-            str.indexOf(" ページ指定") != -1 ||
-            str.indexOf(" フォント優先") != -1
-          ) {
-            if (str.indexOf(" ページ指定") != -1) {
-              pgS = String(str).substring(
-                str.indexOf(" ページ指定") + 6,
-                str.indexOf("から")
-              );
-              pgE = String(str).substring(
-                str.indexOf("から") + 2,
-                str.indexOf("まで")
-              );
+        emojiIs = await myPromise2q(messageReacted2).then(
+          async function (emojiIs2) {
+            console.log("emojiIs2", emojiIs2);
+            if (emojiIs2.length > 0 && emojiIs2[0][0] == "✅") {
+              console.log("emojiIs2[0][0]", emojiIs2[0][0]);
+              i = 10;
+              return i;
             }
-            if (str.indexOf(" フォント優先") != -1) {
-              ctC = String(str).substring(
-                str.indexOf("フォント優先") + 6,
-                str.indexOf("。")
+            console.log("befMes[i][1]", String(befMes[i][1]));
+            str = String(befMes[i][1]);
+            if (str.indexOf("https://") == -1) {
+              console.log("リンクなし");
+              skip++;
+            }
+            //デフォルトはPDF全ページかつフォント優先なし。ただし誤字などは自動補正される。
+            (pgS = "FR"), (pgE = "FR"), (ctC = "FALSE");
+            if (
+              str.indexOf(" ページ指定") != -1 ||
+              str.indexOf(" フォント優先") != -1
+            ) {
+              if (str.indexOf(" ページ指定") != -1) {
+                pgS = String(str).substring(
+                  str.indexOf(" ページ指定") + 6,
+                  str.indexOf("から"),
+                );
+                pgE = String(str).substring(
+                  str.indexOf("から") + 2,
+                  str.indexOf("まで"),
+                );
+              }
+              if (str.indexOf(" フォント優先") != -1) {
+                ctC = String(str).substring(
+                  str.indexOf("フォント優先") + 6,
+                  str.indexOf("。"),
+                );
+                if (String(ctC) == "あり") {
+                  ctC = "TRUE";
+                } else {
+                  ctC = "FALSE";
+                }
+              }
+              mesURLG = String(str).substring(
+                str.indexOf("channels/") + 9,
+                str.indexOf(" "),
               );
-              if (String(ctC) == "あり") {
-                ctC = "TRUE";
-              } else {
-                ctC = "FALSE";
-              }
+            } else {
+              mesURLG = String(str).substring(str.indexOf("channels/") + 9);
             }
-            mesURLG = String(str).substring(
-              str.indexOf("channels/") + 9,
-              str.indexOf(" ")
-            );
-          } else {
-            mesURLG = String(str).substring(str.indexOf("channels/") + 9);
-          }
-          console.log("pgS?", pgS, "pgE?", pgE, "ctC?", ctC);
-          str = String(mesURLG);
-          console.log("str", str);
-          mesURLC = String(str).substring(str.indexOf("/") + 1);
-          str = String(mesURLC);
-          console.log("str", str);
-          channelId = String(str).substring(0, str.indexOf("/"));
-          messageId = String(str).substring(str.indexOf("/") + 1);
-          console.log("channelId", channelId, "messageId", messageId);
-          try {
-            channel2 = await client.channels.fetch(String(channelId));
-          } catch (e) {
-            console.warn(e);
-            skip++;
-          }
-          console.log("ch2?", channel2);
-          try {
-            message = await channel2.messages.fetch(String(messageId));
-          } catch (e) {
-            console.warn(e);
-            skip++;
-          }
-          console.log("mes?", message);
-          try {
-            if (Number(skip) == 0) {
-              //空き状況の確認
-              if (res == null) {
-                let req = JSON.stringify({ p1: String(process.env.VOLUME2) });
-                res = await fetching1(String(process.env.uri5), req);
-              }
-              console.log("res", res.type);
-              if (String(res.type) === "OK") {
-                pdfIs = pdfToPngRetriever(message, pgS, pgE, ctC, res);
-              } else {
-                pdfIs = "NG";
-              }
+            console.log("pgS?", pgS, "pgE?", pgE, "ctC?", ctC);
+            str = String(mesURLG);
+            console.log("str", str);
+            mesURLC = String(str).substring(str.indexOf("/") + 1);
+            str = String(mesURLC);
+            console.log("str", str);
+            channelId = String(str).substring(0, str.indexOf("/"));
+            messageId = String(str).substring(str.indexOf("/") + 1);
+            console.log("channelId", channelId, "messageId", messageId);
+            try {
+              channel2 = await client.channels.fetch(String(channelId));
+            } catch (e) {
+              console.warn(e);
+              skip++;
             }
-          } catch (e) {
-            console.warn(e);
-          }
-          befMes[i][2].react("✅"); /*if(pdfIs == "OK"){}*/
-          return;
-        });
+            console.log("ch2?", channel2);
+            try {
+              message = await channel2.messages.fetch(String(messageId));
+            } catch (e) {
+              console.warn(e);
+              skip++;
+            }
+            console.log("mes?", message);
+            try {
+              if (Number(skip) == 0) {
+                //空き状況の確認
+                if (res == null) {
+                  let req = JSON.stringify({ p1: String(process.env.VOLUME2) });
+                  res = await fetching1(String(process.env.uri5), req);
+                }
+                console.log("res", res.type);
+                if (String(res.type) === "OK") {
+                  pdfIs = pdfToPngRetriever(message, pgS, pgE, ctC, res);
+                } else {
+                  pdfIs = "NG";
+                }
+              }
+            } catch (e) {
+              console.warn(e);
+            }
+            befMes[i][2].react("✅"); /*if(pdfIs == "OK"){}*/
+            return;
+          },
+        );
         return emojiIs;
       });
   }
@@ -1906,7 +1907,7 @@ async function pdfToPngRetriever(message, pgS, pgE, ctC, res) {
   const sizes = message.attachments.map((attachment) => attachment.size);
   const urls = message.attachments.map((attachment) => attachment.url);
   const ctTypes = message.attachments.map(
-    (attachment) => attachment.contentType
+    (attachment) => attachment.contentType,
   );
   const names = message.attachments.map((attachment) => attachment.name);
   console.log("sizes", sizes);
@@ -2124,7 +2125,7 @@ async function searchPart_controller(dataObject) {
       "\nmeritSys",
       meritSys,
       "\nreportTo",
-      reportTo
+      reportTo,
     );
     //座布団制度処理方法の整理
     if (String(meritSys).indexOf("制度なし") == -1) {
@@ -2164,7 +2165,7 @@ async function searchPart_controller(dataObject) {
       meritSys2,
       reportTo2,
       list1s[i],
-      list2s[i]
+      list2s[i],
     );
     newLists.push(newList);
   }
@@ -2179,7 +2180,7 @@ async function searchPart_editor(
   meritSys2,
   reportTo2,
   list1,
-  list2
+  list2,
 ) {
   /*console.log("\nguildName", guildName, "\nlist1\n", list1, "\nlist2\n", list2);*/
   let guild = await client.guilds.cache.get(String(guildId));
@@ -2211,7 +2212,7 @@ async function searchPart_editor(
             String(currentList2[i][0]),
             String(currentList2[i][1].user.username),
             reportTo2,
-            String(reportTo2.rThelloColor)
+            String(reportTo2.rThelloColor),
           );
         }
         if (meritSys2.type == "制度あり") {
@@ -2220,7 +2221,7 @@ async function searchPart_editor(
             String(list2[j][0]).replace("▼", ""),
             String(list2[j][1]),
             String(list2[j][2]),
-            meritSys2
+            meritSys2,
           );
         }
         newList.push([
@@ -2238,7 +2239,7 @@ async function searchPart_editor(
             String(currentList2[i][0]),
             String(currentList2[i][1].user.username),
             reportTo2,
-            String(reportTo2.rThelloColor)
+            String(reportTo2.rThelloColor),
           );
         }
         if (meritSys2.type == "制度あり") {
@@ -2284,7 +2285,7 @@ async function searchPart_editor(
             String(list2[i][0]),
             String(list2[i][1]),
             reportTo2,
-            String(reportTo2.rTbyeColor)
+            String(reportTo2.rTbyeColor),
           );
           meritStr = "▼";
         }
@@ -2306,7 +2307,7 @@ async function searchPart_meritRoleChanger(
   userId,
   userName,
   meritNum,
-  meritSys2
+  meritSys2,
 ) {
   let member = await guild.members.cache.get(String(userId));
   let meritNumArr,
@@ -2327,20 +2328,20 @@ async function searchPart_meritRoleChanger(
   }
   let role1up = String(meritSys2.role1Requirements).slice(
       0,
-      String(meritSys2.role1Requirements).indexOf("以上")
+      String(meritSys2.role1Requirements).indexOf("以上"),
     ),
     role1dn = String(meritSys2.role1Requirements).slice(
       String(meritSys2.role1Requirements).indexOf("以上") + 2,
-      String(meritSys2.role1Requirements).indexOf("以下")
+      String(meritSys2.role1Requirements).indexOf("以下"),
     ),
     role1T = meritSys2.role1T;
   let role2up = String(meritSys2.role2Requirements).slice(
       0,
-      String(meritSys2.role2Requirements).indexOf("以上")
+      String(meritSys2.role2Requirements).indexOf("以上"),
     ),
     role2dn = String(meritSys2.role2Requirements).slice(
       String(meritSys2.role2Requirements).indexOf("以上") + 2,
-      String(meritSys2.role2Requirements).indexOf("以下")
+      String(meritSys2.role2Requirements).indexOf("以下"),
     ),
     role2T = meritSys2.role2T;
   console.log(
@@ -2353,7 +2354,7 @@ async function searchPart_meritRoleChanger(
     "role2dn",
     role2dn,
     "meritNum",
-    meritNum
+    meritNum,
   );
   if (String(meritNum) != "") {
     if (
@@ -2432,7 +2433,7 @@ async function searchPart_meritRoleChanger(
         userId,
         userName,
         meritSys2,
-        color
+        color,
       );
       /*}*/
     }
@@ -2445,19 +2446,19 @@ async function searchPart_HelloByeSender(
   userId,
   userName,
   reportTo2,
-  color
+  color,
 ) {
   let res = String(type) + String(userName) + " (@" + String(userId) + ")";
   await sendMsg(
     String(reportTo2.rTchannelId),
-    "**参加者に関する通知**\n" + res
+    "**参加者に関する通知**\n" + res,
   );
   await sendEmbedMsg(
     String(reportTo2.rTchannelId),
     "参加者に関する通知",
     res,
     null,
-    color
+    color,
   );
 }
 
@@ -2562,16 +2563,16 @@ async function meiboAudit_controller(channelID) {
           beforeMessage.createdAt.getTime(),
           beforeMessage,
         ]);
-        emojiIs = await myPromise2q(messageReacted2).then(async function (
-          emojiIs2
-        ) {
-          console.log("emojiIs2", emojiIs2);
-          if (emojiIs2.length > 0 && emojiIs2[0][0] == "✅") {
-            console.log("emojiIs2[0][0]", emojiIs2[0][0]);
-            i = 100;
-          }
-          return i;
-        });
+        emojiIs = await myPromise2q(messageReacted2).then(
+          async function (emojiIs2) {
+            console.log("emojiIs2", emojiIs2);
+            if (emojiIs2.length > 0 && emojiIs2[0][0] == "✅") {
+              console.log("emojiIs2[0][0]", emojiIs2[0][0]);
+              i = 100;
+            }
+            return i;
+          },
+        );
         return emojiIs;
       });
   }
@@ -2615,7 +2616,7 @@ async function meiboAudit_sender(obj, recipientsArr, partyArr) {
         "res.stampArr",
         res.stampArr,
         "\nres.answerArr",
-        res.answerArr
+        res.answerArr,
       );
       meiboAudit_bulk(obj, res.stampArr, res.answerArr);
     } else {
@@ -2638,7 +2639,7 @@ async function meiboAudit_bulk(obj, stampArr, answerArr) {
     channelID = String(stampArr[i][0]);
     messageID = String(stampArr[i][1]).replace(
       String(obj.serverURL) + String(stampArr[i][0]),
-      ""
+      "",
     );
     channel = client.channels.cache.get(String(channelID));
     mes = await channel.messages.fetch(messageID);
@@ -2685,7 +2686,7 @@ function peopleInTheGuild2(guildId, userName) {
   try {
     let guild = client.guilds.cache.get(String(guildId));
     let user = client.users.cache.find(
-      (user) => user.username == String(userName)
+      (user) => user.username == String(userName),
     );
     if (!user) {
       return "ありません";
@@ -2757,7 +2758,11 @@ async function sendMsgWithFrags(channelId, text, options) {
     let flags = options.flags,
       files = options.files,
       emojis = options.emojis;
-    if (files != undefined && files != null && files[0].search(/^base64File/) > -1) {
+    if (
+      files != undefined &&
+      files != null &&
+      files[0].search(/^base64File/) > -1
+    ) {
       let fileData = files[0].split(",");
       console.log(fileData[1]);
       let buffer = Buffer.from(String(fileData[2]), "base64");
@@ -2792,7 +2797,7 @@ async function sendEmbedMsg(
   text,
   image,
   color,
-  option = {}
+  option = {},
 ) {
   console.log("sendEmbedMsg", channelId, fieldTitle, text, image, color);
   /*const sleep = (second) =>
@@ -2818,7 +2823,7 @@ async function sendEmbedMsg(
     .get(channelId)
     .send({ embeds: [embed] })
     .then(
-      console.log("埋め込みメッセージ送信: " + text + JSON.stringify(option))
+      console.log("埋め込みメッセージ送信: " + text + JSON.stringify(option)),
     )
     .catch(console.error);
 }
