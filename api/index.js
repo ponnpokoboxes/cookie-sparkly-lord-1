@@ -2757,6 +2757,12 @@ async function sendMsgWithFrags(channelId, text, options) {
     let flags = options.flags,
       files = options.files,
       emojis = options.emojis;
+    if (files != undefined && files != null && files[0].search(/^base64File/) > -1) {
+      let fileData = files[0].split(",");
+      console.log(fileData[1]);
+      let buffer = Buffer.from(String(fileData[2]), "base64");
+      files = [new AttachmentBuilder(buffer, { name: String(fileData[1]) })];
+    }
     let option = { flags, files };
     let emojiStr;
     console.log("bbbbbbb", channelId, text, options);
