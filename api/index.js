@@ -2082,7 +2082,7 @@ async function pdfToPngSender(channelId, mes, pngJ) {
         String(Number(page)) +
         "ページ目" +
         String(comIs);
-      let options = { flags: null, files: pngArray, emojis: null };
+      let options = { ext: "ext", flags: null, files: pngArray, fileFromAtb: "Y", emojis: null };
       /*fs.writeFileSync(String(name), bufferIs);*/ //テスト用
       await sendMsgWithFrags(channelId, mes2, options);
       page2 = Number(page) + 1;
@@ -2755,14 +2755,15 @@ async function webhook1(settings) {
 //メッセージ送信（添付ファイルなど）
 async function sendMsgWithFrags(channelId, text, options) {
   try {
-    let flags = options.flags,
-      files = options.files,
-      emojis = options.emojis;
-    if (
-      files != undefined &&
-      files != null &&
-      files[0].search(/^base64File/) > -1
-    ) {
+    let flags = null,
+      files = null,
+      emojis = null;
+    if (options != undefined && options != null && options.ext != null) {
+      (flags = options.flags),
+        (files = options.files),
+        (emojis = options.emojis);
+    }
+    if (files != undefined && files != null && options.fileFromAtb == undefined && files[0].search(/^base64File/) > -1) {
       let fileData = files[0].split(",");
       console.log(fileData[1]);
       let buffer = Buffer.from(String(fileData[2]), "base64");
@@ -2773,7 +2774,11 @@ async function sendMsgWithFrags(channelId, text, options) {
     console.log("bbbbbbb", channelId, text, options);
     let sentMes = await client.channels.cache
       .get(channelId)
-      .send({ content: text, flags: flags, files: files })
+      .send({
+        content: text,
+        flags: flags,
+        files: files,
+      })
       .then(console.log("メッセージ送信: " + text + JSON.stringify(option)))
       .catch(console.error);
     if (emojis != null && emojis.length > 0) {
